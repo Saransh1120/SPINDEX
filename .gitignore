@@ -68,3 +68,6 @@ scratch/
 docs/manual.txt
 docs/reva.txt
 docs/revb.txt
+
+# Images used in the README are tracked; the generated plot directory is not.
+!docs/images/

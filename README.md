@@ -144,6 +144,19 @@ and aperture photometry. The forward model never saw any of that.
 4 of 6 is the expectation for a well-calibrated posterior — the intervals are
 neither optimistic nor padded.
 
+![Fit and residuals against the measured light curve](docs/images/inversion_residuals.png)
+
+*The fit against the curve measured off rendered video. Orange traces are draws
+from the posterior. The residual panel and its distribution are what chi2_red
+1.55 looks like — structure at that level is model error, not noise.*
+
+![Posterior distributions](docs/images/posteriors.png)
+
+*Posterior distributions for all six fitted parameters, with commanded truth
+marked in blue. Off-diagonal panels show the parameter correlations; the tight,
+well-separated posteriors on the two periods are why they are quoted to five
+decimal places.*
+
 **Robustness:** 78/80 across noise 1–10 %, five random seeds, both target models.
 The two failures are 60 s recordings at 10 % noise; every 120 s case passes,
 which is the minimum recording length the design specifies earning its place.
@@ -173,6 +186,14 @@ forever. Each round now divides out a boxcar one fold-window wide first.
 of half-cycles looks significantly different — samples in one phase bin come from
 many rotations at many rock angles and scatter for a *physical* reason too. The
 test uses the empirical standard error, floored at the photon error.
+
+![Period recovery: light curve, periodogram, envelope, fold test](docs/images/period_recovery.png)
+
+*Top to bottom: the synthetic light curve with its glints; the Lomb-Scargle
+periodogram with 1/P_A, 2/P_A and the envelope harmonics marked; the envelope
+periodogram after the fine structure is averaged out; and the fold test itself —
+the two half-cycles overlaid, reduced chi2 = 0.12, so doubling buys nothing and
+the walk stops.*
 
 The result: Model A correctly reports that it can only constrain `P_A/2` — a
 symmetric target is genuinely degenerate, and saying so is the right answer.
@@ -221,6 +242,8 @@ Full design note: [`docs/NOTIFICATION_RULES.md`](docs/NOTIFICATION_RULES.md)
 
 ## Live monitor — the guidance feed
 
+![SPINDEX live dashboard](docs/images/live_dashboard.png)
+
 ```bash
 python pipeline/live.py --source 0 --window 120
 ```
@@ -255,6 +278,13 @@ source needing no camera at all.
 
 ## The hardware
 
+![The assembled instrument](docs/images/hw_full_rig.jpg)
+
+*The assembled instrument. 2020 aluminium frame, printed PETG cradle carrying
+Motor A, target mounted on the hub, and the Axis B shaft running through
+bearing blocks in both posts. Power supply and controller sit on the base rail
+at left; a second target stands on its own post at right.*
+
 SPINDEX is validated against a bench instrument that produces a *commanded*
 tumble — the whole point being that the answer is known before the measurement.
 Three subsystems, connected by a single signal path.
@@ -278,6 +308,13 @@ spin any FFT solves in one line.
 
 ### Motion and control
 
+![Arduino Uno, CNC Shield V3 and stepper drivers](docs/images/hw_electronics.jpg)
+
+*Control electronics: 12 V SMPS, CNC Shield V3 with the stepper drivers in the
+X and Y sockets, inline fuse and rocker switch on the 12 V rail, and the USB
+link to the host. Motor leads run out to the cradle through the flexing service
+loop rather than a slip ring.*
+
 | Item | Specification | Qty | Role |
 |---|---|---|---|
 | Stepper motor | NEMA 17 · 17HS4401 · 1.8° · 40 N·cm · 1.5 A/phase · 4-wire bipolar · 5 mm shaft | 2 | Axis A spin, Axis B tilt |
@@ -297,6 +334,13 @@ microstepping and 256-step interpolation keeps that artefact below the
 measurement floor.
 
 ### Transmission and structure
+
+![The cradle carrying Motor A, with counterweight and service loop](docs/images/hw_cradle.jpg)
+
+*The cradle in detail. Motor A is mounted inside it, driving the target through
+the hub above; the whole assembly pivots on the Axis B shaft, which is what
+sweeps the spin axis through the observer's frame and gives the light curve its
+second, incommensurate frequency.*
 
 | Item | Specification | Qty |
 |---|---|---|
@@ -363,6 +407,13 @@ rejection and tells you which number to trust.
 
 ### Illumination and optics
 
+![Camera, lamp and target at a 30 degree phase angle](docs/images/hw_optical.jpg)
+
+*The optical geometry, with the camera arm at upper right looking across at the
+target. In this photograph the instrument is on an open bench under ambient
+hall lighting; measurement runs require the light-sealed enclosure and the
+single DC-driven COB source described above.*
+
 | Item | Specification | Why |
 |---|---|---|
 | Lamp | COB LED · 10 W · **12 V DC direct-drive** · ~5000 K | Never mains-driven, never PWM-dimmed |
@@ -386,6 +437,23 @@ contrast between specular and diffuse components — which is the very contrast
 being measured.
 
 ### Target models
+
+![The printed box-wing target](docs/images/hw_target.jpg)
+
+*The Model A target: a symmetric box-wing, central bus with two opposed panels.
+This is the geometry that glints twice per revolution and therefore puts its
+dominant periodogram power at 2/P_A — the harmonic ambiguity the pipeline has
+to resolve.*
+
+> **Printed but not yet surfaced.** These are bare PLA. Section 9.1 of the
+> specification is explicit that printing alone is not enough: bare PLA is close
+> to a uniform Lambertian diffuser in every direction and yields a low-contrast,
+> nearly featureless curve with little to invert. The measurement depends on the
+> *contrast* between a strongly specular panel and a diffusely reflecting bus, so
+> the bus needs creased aluminised mylar and the panels need a blue transparent
+> facing before a scoring run. Until then the recovered period will still be
+> correct — periodicity survives low contrast — but modulation depth, glint
+> sharpness and the panel-area ratio will all be degraded.
 
 Two are printed. **Model A** is a symmetric box-wing with two opposed panels —
 the baseline, and the harmonic-ambiguity test case. **Model B** carries a single
