@@ -299,54 +299,6 @@ No hardware needed for any of the above.
 
 ---
 
-## What this does not do
-
-Stating limits plainly is part of the specification. An instrument whose limits
-are declared is more credible than one whose limits are discovered.
-
-- **No real orbital targets.** Atmospheric seeing, target faintness and tracking
-  are outside this build.
-- **No absolute radiometry.** Camera response is non-linear and only
-  approximately linearised; recovered areas are *relative*, not calibrated.
-- **Not a general shape solver.** The forward model is a parameterised box-wing,
-  appropriate for artificial satellites, not full convex inversion.
-- **Panel area is systematics-limited, not noise-limited.** Its formal interval
-  is ~0.1 % but it sits 0.24–0.54 % high, at 2.2σ and 4.3σ. Periods and cone
-  angle come back essentially exact; the amplitude-derived quantity does not.
-  Quote it with a systematic term.
-- **Hardware bring-up is incomplete.** The mechanism is assembled and the
-  firmware is written and compiles, but the controller failed during bring-up and
-  a replacement is on order. The optical ground-truth sensor is not fitted, so
-  the commanded step rate — not an independent channel — is currently the
-  reference. It cannot detect a stalled motor.
-
----
-
-## Things the tests caught that reading the code would not
-
-**A wrong photometry gain made χ² meaningless, and the error rescaling hid it.**
-The intensity-to-photon gain was a hardcoded guess, wrong by 113×. The recovered
-*parameters* were unaffected, but the error bars were nonsense and χ²_red came
-out at 174.9. Because the fitter rescales errors by √χ²_red, the posteriors still
-looked plausible and coverage still looked right — the symptom was entirely
-absorbed. Fixed: 174.9 → 1.55.
-
-**Exposure scaling silently destroyed the photometry.** The target initially sat
-at 0.2 % of full well, so the measurement was mostly 8-bit rounding — a 15.7 %
-residual with no other symptom. Fixed by setting the exposure so the peak pixel
-lands at 88 % of full scale. Residual fell to 1.2 %.
-
-**Gamma, measured rather than asserted.** Disabling response linearisation drops
-Pearson *r* from 0.9997 to 0.9574 while Spearman only moves 0.9980 → 0.9708, and
-the period still lands at 0.0095 %. Rank preserved, linearity destroyed — the
-signature of a monotonic distortion, and confirmation that period survives it
-while amplitude does not.
-
-**A near-constant feature history makes everything look significant.** An almost
-flat feature has an almost-zero MAD, so the z-score explodes on ordinary noise.
-Fixed by requiring both an n-MAD exceedance *and* a minimum fractional change.
-
----
 
 ## Name
 
@@ -358,5 +310,3 @@ nobody can reach, touch, or ask.
 
 ---
 
-*Built against the SDC-001 Rev B specification, included in `docs/`. Section
-references throughout the code point to that document.*
