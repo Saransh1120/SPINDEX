@@ -1,0 +1,21 @@
+# SDC-001 pipeline dependencies.
+#   pip install -r requirements.txt
+
+# --- core: offline pipeline, stages 1-9 ---
+numpy>=1.24
+scipy>=1.11
+pillow>=10.0            # frame I/O in photometry.py
+matplotlib>=3.7         # all plots, and the live dashboard
+emcee>=3.1              # stage 8 posteriors
+
+# --- live monitor (pipeline/live.py) ---
+opencv-python>=4.8      # webcam / OBS virtual camera capture
+
+# --- ffmpeg binary for stage 2 frame extraction ---
+# A system ffmpeg on PATH is used if present. If not, this ships a private one:
+imageio-ffmpeg>=0.4.9
+
+# --- optional ---
+corner>=2.2             # posterior corner plots in validate.py
+pyserial>=3.5           # serial_log.py live capture from the Arduino
+# astropy>=6.0          # cross-check for period.gls(prefer_astropy=True)

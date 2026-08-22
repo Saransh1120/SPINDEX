@@ -1,0 +1,28 @@
+========================================================================
+SDC-001 pipeline, stages 1-6, synthetic Model A
+========================================================================
+120 s at 60 fps, 160x120 px, gamma 2.2
+
+Stage 3 fidelity (measured flux vs the light curve that generated it)
+  Pearson r  0.999559    Spearman r  0.993004    resid 1.876%
+
+Harmonic resolution
+  strongest spin-band peak : 2.162532 Hz -> 0.46242 s
+  round 1: 0.46242 s vs 0.92484 s  chi2_red =     7.16 -> fundamental
+  round 2: 0.92484 s vs 1.84968 s  chi2_red =     0.19 -> half
+  light-curve repeat period : 0.92484 s
+  target symmetry order     : 2
+
+Recovered against commanded truth
+  quantity                              recovered      truth     dev
+  spin period P_A [s]            1.84968 +/- 0.00011    1.84971   -0.3s
+  precession P_B [s]            11.40832 +/- 0.00970   11.40820    0.0s
+
+  P_A error vs commanded : 0.0015 %
+  P_B error vs commanded : 0.0010 %
+
+  Note: the photometry constrains the repeat period to P_A/2. Model
+  A is 2-fold symmetric about the spin axis, so consecutive cycles
+  are identical and no photometric method can separate them. The slot
+  sensor picks the branch; Model B breaks the symmetry optically.
+========================================================================

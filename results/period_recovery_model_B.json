@@ -1,0 +1,54 @@
+{
+  "model": "B",
+  "truth": {
+    "p_spin": 1.8497109826589595,
+    "p_prec": 11.408199643493761,
+    "cone_deg": 60.0
+  },
+  "recovered": {
+    "p_spin": 1.8496967469619772,
+    "p_spin_err": 0.00011382389232557012,
+    "p_prec": 11.415961573526491,
+    "p_prec_err": 0.011481542748273784,
+    "slot_p_spin": 1.849711252197802,
+    "slot_p_spin_err": 1.989133772037982e-06
+  },
+  "harmonic": {
+    "f_spin_peak": 2.1625166431036735,
+    "spin_harmonic": 4.0,
+    "chi2_reduced": 0.11707661282101642,
+    "decision": "half",
+    "trail": [
+      {
+        "p_half": 0.4624241867404943,
+        "p_full": 0.9248483734809886,
+        "chi2_reduced": 22.641919883164363,
+        "decision": "fundamental"
+      },
+      {
+        "p_half": 0.9248483734809886,
+        "p_full": 1.8496967469619772,
+        "chi2_reduced": 7.180375870474883,
+        "decision": "fundamental"
+      },
+      {
+        "p_half": 1.8496967469619772,
+        "p_full": 3.6993934939239543,
+        "chi2_reduced": 0.11707661282101642,
+        "decision": "half"
+      }
+    ],
+    "f_prec_peak": 0.17519330168717293,
+    "prec_harmonic": 2.0
+  },
+  "settings": {
+    "model": "B",
+    "duration": 120.0,
+    "fps": 60.0,
+    "noise": 0.02,
+    "stray": 0.015,
+    "drift": 0.0,
+    "seed": 0,
+    "no_plots": true
+  }
+}

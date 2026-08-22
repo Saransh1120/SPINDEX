@@ -1,0 +1,38 @@
+==============================================================================
+SDC-001 inversion validation -- Model B, synthetic light curve
+==============================================================================
+7200 samples over 120 s at 60 fps
+
+Least-squares point estimate       chi2_red = 1.001 on 7192 dof
+  parameter           fitted        truth       error
+  p_spin             1.84971      1.84971      0.000 %   s
+  p_prec            11.40858     11.40820      0.003 %   s
+  cone_deg          59.96476     60.00000     -0.059 %   deg
+  area_ratio         0.09508      0.09501      0.069 %   -
+  spin_phase0        0.37001      0.37000      0.004 %   rad
+  prec_phase0        0.11012      0.11000      0.108 %   cyc
+
+Posterior (emcee, 24 walkers x 400 steps, burn 100, thinned x3)
+  acceptance fraction 0.50
+
+  parameter     median +/- 68%        truth       dev
+  p_spin         1.84971 -0.00000/+0.00001     1.84971     0.6s y  s
+  p_prec        11.40884 -0.00033/+0.00043    11.40820     1.9s n  s
+  cone_deg      60.00029 -0.08101/+0.12939    60.00000     0.0s y  deg
+  area_ratio     0.09513 -0.00023/+0.00020     0.09501     0.5s y  -
+  spin_phase0    0.37001 -0.00062/+0.00068     0.37000     0.0s y  rad
+  prec_phase0    0.11026 -0.00018/+0.00029     0.11000     1.4s n  cyc
+
+  4/6 parameters have truth inside the 68 % credible interval
+  (about 4 of 6 is the expectation for a well-calibrated posterior)
+
+Headline numbers
+  spin period P_A        1.84971 +/- 0.00000   truth 1.84971   (+0.000 %)
+  precession P_B         11.40884 +/- 0.00038   truth 11.40820   (+0.006 %)
+  cone angle             60.00029 +/- 0.10520   truth 60.00000   (+0.000 %)
+  panel:bus area ratio   0.09513 +/- 0.00021   truth 0.09501   (+0.125 %)
+
+  Caveat: fitting synthetic data with the model that generated it is
+  an inverse crime. chi2_red near 1.00 and these intervals reflect
+  photon noise only. Run --from-photometry for the honest number.
+==============================================================================

@@ -1,0 +1,47 @@
+==============================================================================
+SDC-001 inversion validation -- Model A, photometry light curve
+==============================================================================
+7200 samples over 120 s at 60 fps
+
+Least-squares point estimate       chi2_red = 3.287 on 7192 dof
+  parameter           fitted        truth       error
+  p_spin             1.84971      1.84971     -0.000 %   s
+  p_prec            11.40812     11.40820     -0.001 %   s
+  cone_deg          60.01001     60.00000      0.017 %   deg
+  area_ratio         0.19094      0.19002      0.483 %   -
+  spin_phase0        0.36991      0.37000     -0.024 %   rad
+  prec_phase0        0.10995      0.11000     -0.044 %   cyc
+
+Posterior (emcee, 32 walkers x 2500 steps, burn 625, thinned x3)
+  acceptance fraction 0.51
+
+  parameter     median +/- 68%        truth       dev
+  p_spin         1.84971 -0.00000/+0.00000     1.84971    -1.5s n  s
+  p_prec        11.40822 -0.00018/+0.00017    11.40820     0.1s y  s
+  cone_deg      60.01871 -0.05468/+0.05822    60.00000     0.3s y  deg
+  area_ratio     0.19105 -0.00024/+0.00025     0.19002     4.3s n  -
+  spin_phase0    0.36979 -0.00042/+0.00043     0.37000    -0.5s y  rad
+  prec_phase0    0.11002 -0.00009/+0.00009     0.11000     0.2s y  cyc
+
+  4/6 parameters have truth inside the 68 % credible interval
+  (about 4 of 6 is the expectation for a well-calibrated posterior)
+
+Headline numbers
+  spin period P_A        1.84971 +/- 0.00000   truth 1.84971   (-0.000 %)
+  precession P_B         11.40822 +/- 0.00017   truth 11.40820   (+0.000 %)
+  cone angle             60.01871 +/- 0.05645   truth 60.00000   (+0.031 %)
+  panel:bus area ratio   0.19105 +/- 0.00024   truth 0.19002   (+0.539 %)
+
+  Harmonic note: the light curve repeats at P_A/2. The fit was
+  started at 2x the repeat period, chosen by the slot sensor, not
+  by the photometry -- Model A is 2-fold symmetric and the two
+  branches are photometrically identical.
+
+  This curve came through rendering, H.264, ffmpeg extraction and
+  aperture photometry. The forward model has seen none of that, so
+  chi2_red above 1 is real model error -- codec artefacts, 8-bit
+  quantisation, aperture effects -- and the rescaled errors carry it.
+  A chi2_red in the hundreds means something else: the photometric
+  error bars are mis-normalised, usually a wrong gain. Check that
+  render_meta.json exists and that stage 3 reported reading it.
+==============================================================================

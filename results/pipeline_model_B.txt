@@ -1,0 +1,24 @@
+========================================================================
+SDC-001 pipeline, stages 1-6, synthetic Model B
+========================================================================
+120 s at 60 fps, 160x120 px, gamma 2.2
+
+Stage 3 fidelity (measured flux vs the light curve that generated it)
+  Pearson r  0.999702    Spearman r  0.998019    resid 1.315%
+
+Harmonic resolution
+  strongest spin-band peak : 2.162522 Hz -> 0.46242 s
+  round 1: 0.46242 s vs 0.92485 s  chi2_red =    23.70 -> fundamental
+  round 2: 0.92485 s vs 1.84969 s  chi2_red =     7.46 -> fundamental
+  round 3: 1.84969 s vs 3.69938 s  chi2_red =     0.12 -> half
+  light-curve repeat period : 1.84969 s
+  target symmetry order     : 1
+
+Recovered against commanded truth
+  quantity                              recovered      truth     dev
+  spin period P_A [s]            1.84969 +/- 0.00011    1.84971   -0.2s
+  precession P_B [s]            11.41529 +/- 0.01144   11.40820    0.6s
+
+  P_A error vs commanded : 0.0010 %
+  P_B error vs commanded : 0.0621 %
+========================================================================

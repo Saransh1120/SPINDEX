@@ -1,0 +1,39 @@
+{
+  "model": "A",
+  "stage3": {
+    "pearson": 0.9995591813808272,
+    "spearman": 0.9930043707819773,
+    "resid_frac": 0.01875698413426161,
+    "aperture": "centre (80.2, 59.9) px, r = 22.1 px, annulus 27.6-42.0 px",
+    "n_pix": 1530,
+    "saturated_frames": 0
+  },
+  "recovered": {
+    "p_spin": 1.8496832753571397,
+    "p_spin_err": 0.00010500208634585101,
+    "p_prec": 11.408318738849626,
+    "p_prec_err": 0.00969845545501012,
+    "symmetry_order": 2
+  },
+  "truth": {
+    "p_spin": 1.8497109826589595,
+    "p_prec": 11.408199643493761
+  },
+  "settings": {
+    "model": "A",
+    "duration": 120.0,
+    "fps": 60.0,
+    "size": [
+      160,
+      120
+    ],
+    "gamma": 2.2,
+    "no_linearise": false,
+    "peak_photons": 90000.0,
+    "stray": 0.015,
+    "skip_video": false,
+    "reuse_frames": true,
+    "recentre": false,
+    "seed": 0
+  }
+}

@@ -1,0 +1,70 @@
+# ---------------------------------------------------------------- Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ------------------------------------------------------------ editors / OS
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ------------------------------------------- generated data (large, rebuildable)
+#
+# A single 120 s run writes ~7200 rendered PNGs, a ~41 MB .mov, and ~7200
+# extracted PNGs -- roughly 300 MB per model. All of it is reproducible from
+# source with one command, so none of it belongs in git.
+#
+#   python pipeline/run_pipeline.py --model B
+#
+data/frames/
+data/raw/*.mov
+data/raw/*.mp4
+data/raw/*.avi
+data/raw/*.png
+data/raw/*.jpg
+data/sessions/
+
+# Recorded light curves and serial logs from real runs. Keep your own if they
+# matter -- force-add with `git add -f` -- but they are run artefacts by default.
+data/serial/*.csv
+data/raw/*.csv
+
+# ----------------------------------------------------------- results
+#
+# The text and JSON reports are small and worth keeping: they are the record of
+# what the pipeline produced. Plots and photometry dumps are regenerated on
+# every run and are not.
+results/plots/
+results/*_photometry.csv
+results/_*.log
+
+# ---------------------------------------------------------------- local tooling
+# arduino-cli and its downloaded cores, if placed in-tree
+arduino-cli*
+.arduino*/
+
+# scratch
+*.tmp
+_*.tmp
+scratch/
+
+# Text dumps extracted from the spec PDFs (derived, regenerate with pypdf)
+docs/manual.txt
+docs/reva.txt
+docs/revb.txt

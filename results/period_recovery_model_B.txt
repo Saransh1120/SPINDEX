@@ -1,0 +1,57 @@
+==========================================================================
+SDC-001 period recovery -- synthetic Model B
+==========================================================================
+duration 120 s at 60 fps (7200 samples), noise 2.0%, stray light 1.5%
+
+Commanded truth
+  P_A = 1.8497 s   P_B = 11.4082 s   cone = 60.0 deg   ratio P_B/P_A = 6.1676
+
+Periodogram peaks (frequency Hz, normalised power)
+    0.1754  0.3669  <- 2/P_B
+    2.1624  0.1127
+    1.0810  0.0315  <- 2/P_A
+    1.9869  0.0217
+    2.3378  0.0214
+    0.1634  0.0174  <- 2/P_B
+
+Harmonic resolution -- sub-harmonic walk from the strongest peak
+  strongest spin-band peak : 2.162517 Hz -> 0.46242 s
+  round 1: 0.46242 s vs 0.92485 s  chi2_red =     22.64 over 100 bins -> fundamental
+  round 2: 0.92485 s vs 1.84970 s  chi2_red =      7.18 over 100 bins -> fundamental
+  round 3: 1.84970 s vs 3.69939 s  chi2_red =      0.12 over 100 bins -> half
+  adopted spin period      : 1.84970 s = 4 x the peak period
+    consecutive half-cycles agree within the scatter, so doubling buys
+    nothing; the shorter period is the repeat period of the light
+    curve
+
+Envelope (Axis B), from the fine-structure-averaged curve
+  strongest envelope peak  : 0.175193 Hz -> 5.70798 s
+  round 1: 5.7080 s vs 11.4160 s  chi2_red =     3.03 -> fundamental
+  round 2: 11.4160 s vs 22.8319 s  chi2_red =     0.17 -> half
+  adopted precession period: 11.41596 s = 2 x the peak period
+
+Independent cross-check: phase dispersion minimisation
+  PDM minimum near the adopted period : 1.84970 s (theta = 0.7351)
+  disagreement with Lomb-Scargle      : 0.000 %
+  PDM assumes nothing about profile shape, so agreement here rules
+  out a peak that is an artefact of fitting a sinusoid to a glint.
+
+Recovered against truth
+  quantity                               recovered   expected      dev
+  light-curve repeat P_A/n [s]   1.84970 +/- 0.00011    1.84971    -0.1s
+    x 1 -> spin period [s]       1.84970 +/- 0.00011    1.84971    -0.1s
+  envelope repeat P_B/m [s]     11.41596 +/- 0.01148   11.40820     0.7s
+    x 1 -> precession [s]       11.41596 +/- 0.01148   11.40820     0.7s
+  slot-sensor P_A [s]            1.84971 +/- 0.00000    1.84971     0.1s
+
+  spin period error vs commanded : 0.0008 %
+  precession error vs commanded  : 0.0680 %
+  slot sensor vs commanded       : 0.0000 %
+
+What the photometry alone determined
+  Spin: the full period P_A. The fold test climbed to 1.8497 s and stopped, so the
+  target's asymmetry is detectable and no external input was needed.
+
+'dev' is (recovered - expected) / sigma. The slot-sensor row is an
+independent channel and does not use the video at all.
+==========================================================================

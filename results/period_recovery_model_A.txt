@@ -1,0 +1,61 @@
+==========================================================================
+SDC-001 period recovery -- synthetic Model A
+==========================================================================
+duration 120 s at 60 fps (7200 samples), noise 2.0%, stray light 1.5%
+
+Commanded truth
+  P_A = 1.8497 s   P_B = 11.4082 s   cone = 60.0 deg   ratio P_B/P_A = 6.1676
+
+Periodogram peaks (frequency Hz, normalised power)
+    0.1754  0.4077  <- 2/P_B
+    2.1624  0.1329
+    0.1634  0.0191  <- 2/P_B
+    0.1871  0.0167  <- 2/P_B
+    1.9869  0.0165
+    2.3378  0.0163
+
+Harmonic resolution -- sub-harmonic walk from the strongest peak
+  strongest spin-band peak : 2.162524 Hz -> 0.46242 s
+  round 1: 0.46242 s vs 0.92485 s  chi2_red =      6.62 over 100 bins -> fundamental
+  round 2: 0.92485 s vs 1.84969 s  chi2_red =      0.21 over 100 bins -> half
+  adopted spin period      : 0.92485 s = 2 x the peak period
+    consecutive half-cycles agree within the scatter, so doubling buys
+    nothing; the shorter period is the repeat period of the light
+    curve
+
+Envelope (Axis B), from the fine-structure-averaged curve
+  strongest envelope peak  : 0.175304 Hz -> 5.70438 s
+  round 1: 5.7044 s vs 11.4088 s  chi2_red =     0.03 -> half
+  adopted precession period: 5.70438 s = 1 x the peak period
+
+Independent cross-check: phase dispersion minimisation
+  PDM minimum near the adopted period : 0.92485 s (theta = 0.6396)
+  disagreement with Lomb-Scargle      : 0.000 %
+  PDM assumes nothing about profile shape, so agreement here rules
+  out a peak that is an artefact of fitting a sinusoid to a glint.
+
+Recovered against truth
+  quantity                               recovered   expected      dev
+  light-curve repeat P_A/n [s]   0.92485 +/- 0.00005    0.92486    -0.2s
+    x 2 -> spin period [s]       1.84969 +/- 0.00010    1.84971    -0.2s
+  envelope repeat P_B/m [s]      5.70438 +/- 0.00482    5.70410     0.1s
+    x 2 -> precession [s]       11.40876 +/- 0.00964   11.40820     0.1s
+  slot-sensor P_A [s]            1.84971 +/- 0.00000    1.84971     0.1s
+
+  spin period error vs commanded : 0.0011 %
+  precession error vs commanded  : 0.0049 %
+  slot sensor vs commanded       : 0.0000 %
+
+What the photometry alone determined
+  Spin: only P_A/2. The target is 2-fold symmetric about the spin axis, so
+  consecutive 0.9248 s cycles are identical and the light curve carries no
+  information distinguishing them. This is the correct result, not a failure --
+  Rev B section 9.2 is why Model B exists. The slot sensor picks the branch.
+  Precession: only P_B/2. The rock is symmetric about the plane-of-sky
+  position, so rock angles +eps and -eps present near-identical aspect and the
+  envelope repeats every 5.704 s. See pipeline/README.md on offsetting
+  the sweep centre if the full P_B is wanted from photometry alone.
+
+'dev' is (recovered - expected) / sigma. The slot-sensor row is an
+independent channel and does not use the video at all.
+==========================================================================
