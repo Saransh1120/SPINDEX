@@ -1,0 +1,1243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SPINDEX System Handbook</title>
+<meta name="description" content="SPINDEX — Spin Determination by INDEX of Reflected Light. A live guidance feed that recovers a tumbling derelict's spin state from reflected sunlight alone.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='5' fill='%234aa3ff'/><ellipse cx='16' cy='16' rx='14' ry='6' fill='none' stroke='%23ff9f43' stroke-width='2' transform='rotate(-28 16 16)'/></svg>">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!--
+  Loaded without blocking first paint. A render-blocking stylesheet from a
+  third-party CDN means a slow or unreachable fonts.googleapis.com leaves the
+  page blank until the request times out; the fallback stacks are real, so the
+  page is readable the moment the HTML arrives and simply restyles when the
+  webfonts land.
+-->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"></noscript>
+<link rel="stylesheet" href="assets/css/handbook.css">
+<link rel="stylesheet" href="assets/css/bench.css">
+
+<!-- SGP4, as a global, so the modules can propagate real elements -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/satellite.js/5.0.0/satellite.min.js"></script>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+
+<header class="topnav">
+  <a class="topnav-brand" href="#top">SPINDEX</a>
+  <nav class="topnav-links">
+    <a href="#problem">Problem</a>
+    <a href="#idea">Idea</a>
+    <a href="#bench">3D bench</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#physics">Physics</a>
+    <a href="#inversion">Inversion</a>
+    <a href="#results">Results</a>
+    <a href="#notification">Notification</a>
+    <a href="#hardware">Instrument</a>
+    <a href="#operations">Running</a>
+    <a href="#limits">Limits</a>
+    <a href="#references">References</a>
+  </nav>
+  <span class="spacer"></span>
+  <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch theme">◐</button>
+</header>
+
+<main id="top">
+<div id="view-handbook">
+
+<!-- ================================================================ hero -->
+<section class="hero wrap">
+  <div class="hero-grid">
+    <div>
+      <p class="eyebrow">SYSTEM HANDBOOK · SUSTAIN-A-THON 2.0 2026 · SPACE TECHNOLOGY &amp; SUSTAINABILITY</p>
+      <h1>SPINDEX</h1>
+      <p class="expand"><b>Spin</b> <b>D</b>etermination by <b>INDEX</b> of Reflected Light</p>
+      <p class="lede">
+        A robotic servicer closing on a dead satellite has to match the target's tumble
+        before it can touch it, and nobody knows what that tumble is. SPINDEX recovers it
+        from reflected sunlight alone — rotation period, precession, cone angle and coarse
+        geometry — continuously, with uncertainties on every number, using nothing but a
+        camera and a light source.
+      </p>
+      <div class="id-line">
+        <span>Team <b>ZEIT v1.0</b></span>
+        <span>Team ID <b>S080</b></span>
+        <span>Category <b>Hardware</b></span>
+        <span>Lead <b>Sarthak Tyagi</b></span>
+      </div>
+      <div class="cta-row">
+        <a class="cta is-primary" href="#bench">Open the 3D bench →</a>
+        <a class="cta" href="#results">Validated results</a>
+        <a class="cta" href="https://github.com/Sarthakk1407/SPINDEX" rel="noopener">Source on GitHub ↗</a>
+      </div>
+    </div>
+
+    <figure class="hero-figure">
+      <img src="assets/img/bench_poster.jpg" alt="Landsat 7 tumbling in sunlight, watched by a servicer, in the SPINDEX orbital bench" width="1280" height="720" fetchpriority="high">
+      <figcaption>
+        The orbital bench: NASA's Landsat 7, tumbling under the commanded kinematics,
+        with the light curve computed from facets taken from its own triangles.
+        <a href="#bench">Open it →</a>
+      </figcaption>
+    </figure>
+  </div>
+
+  <div class="tiles">
+    <div class="tile green"><div class="v">1.84971<small> s</small></div><div class="k">Spin period recovered<span class="badge">MEASURED</span></div><div class="s">commanded 1.84971 s</div></div>
+    <div class="tile green"><div class="v">−0.000<small> %</small></div><div class="k">Error against commanded</div><div class="s">through H.264 and photometry</div></div>
+    <div class="tile blue"><div class="v">78/80</div><div class="k">Robustness runs pass</div><div class="s">noise 1–10 %, five seeds</div></div>
+    <div class="tile purple"><div class="v">44/44</div><div class="k">Unit tests pass</div><div class="s">features, detectors, policy, archives</div></div>
+    <div class="tile blue"><div class="v">0.9997</div><div class="k">Photometry fidelity <em>r</em></div><div class="s">measured vs input curve</div></div>
+    <div class="tile amber"><div class="v">₹13,850</div><div class="k">Instrument cost</div><div class="s">one camera, one lamp, two motors</div></div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================= problem -->
+<section class="numbered t-red wrap" id="problem">
+  <div class="sec-head"><span class="sec-num">01</span><h2>The problem</h2></div>
+  <p class="lede">
+    A dead satellite is tumbling, and a tug has to match that tumble before it can grapple
+    it. The tumble is unknown, it changes over time, and getting it wrong is how a removal
+    mission becomes a debris-creation event.
+  </p>
+
+  <div class="tiles">
+    <div class="tile red"><div class="v">36,000+</div><div class="k">Tracked objects in orbit</div><div class="s">far more than any campaign can characterise</div></div>
+    <div class="tile red"><div class="v">5–10</div><div class="k">Large objects that must come down each year</div><div class="s">to stabilise the environment</div></div>
+    <div class="tile red"><div class="v">≈ none</div><div class="k">Of those with a published spin state</div><div class="s">every capture starts blind</div></div>
+    <div class="tile blue"><div class="v">1</div><div class="k">Sensor SPINDEX needs</div><div class="s">a camera — it screens a catalogue</div></div>
+  </div>
+
+  <p>
+    Robotic servicers are no longer theoretical. Astroscale's ADRAS-J flew to a spent
+    Japanese upper stage in 2024. Northrop Grumman's Mission Extension Vehicles have docked
+    with live commercial satellites and taken over their station-keeping. ClearSpace-1 is
+    being built to capture and deorbit a rocket adapter.
+  </p>
+
+  <div class="grid-3">
+    <div class="card">
+      <h4>Momentum transfer</h4>
+      <p>Grapple a body whose rotation you have not matched and its angular momentum becomes
+      yours. Exceed what your wheels and thrusters can dump and you have two tumbling
+      spacecraft instead of one.</p>
+    </div>
+    <div class="card">
+      <h4>Fragmentation</h4>
+      <p>A mistimed contact on a fragile, decades-old structure breaks it apart and creates
+      thousands of new debris objects — the exact opposite of the mission's purpose.</p>
+    </div>
+    <div class="card">
+      <h4>Propellant exhaustion</h4>
+      <p>Matching an unexpected tumble costs fuel that was budgeted for the rest of the
+      mission.</p>
+    </div>
+  </div>
+
+  <p>
+    And spin states are not static. They evolve through eddy-current damping against Earth's
+    magnetic field, internal energy dissipation, solar radiation pressure and
+    gravity-gradient torque. <strong>A characterisation from three years ago is stale by the
+    time the tug arrives.</strong>
+  </p>
+</section>
+
+<hr class="rule">
+
+<!-- ================================================================ idea -->
+<section class="numbered t-blue wrap" id="idea">
+  <div class="sec-head"><span class="sec-num">02</span><h2>The idea: one scalar carries the whole motion</h2></div>
+
+  <p class="lede">
+    A derelict emits no light of its own. It is metal and composite reflecting sunlight,
+    exactly as the Moon does — and because it is not spherical, the fraction of light it
+    sends toward an observer depends on its instantaneous orientation.
+  </p>
+  <p>
+    A flat solar panel turning face-on produces a sharp specular glint; the same panel
+    edge-on returns almost nothing. As the body rotates, that fraction varies. Brightness
+    recorded against time is a <strong>light curve</strong>, and its rhythm, harmonic
+    content and profile shape encode the rotation rate, the orientation of the spin axis,
+    and coarse information about the reflecting geometry. SPINDEX inverts that.
+  </p>
+
+  <figure>
+    <img src="assets/img/hero_glint.png" alt="Five rendered target frames above the light curve they produce, with the glint marked" loading="lazy" width="2720" height="1003">
+    <figcaption>
+      The target at five rotation phases, and the curve those phases produce. The flash at
+      t = 4.58 s is a panel turning face-on. Everything SPINDEX reports is inverted from
+      that one line.
+    </figcaption>
+  </figure>
+
+  <div class="callout">
+    <span class="label">The claim that makes it evidence</span>
+    <p>
+      Point this at a real derelict and it produces a number nobody can check, because the
+      true rotation of an uncooperative dead satellite is precisely the thing nobody knows.
+      So SPINDEX is validated against a target whose motion is <strong>commanded</strong>:
+      the rotation rate is set in firmware, the geometry is set by design, and the inversion
+      is scored against a value that was known before the measurement began.
+    </p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================== bench -->
+<section class="numbered t-purple wrap" id="model">
+  <div class="sec-head"><span class="sec-num">03</span><h2>The 3D bench</h2></div>
+
+  <p class="lede">
+    The measurement has its own page, and it runs against real objects. Five catalogued
+    satellites are propagated from their published orbital elements with SGP4 against
+    your clock — where they are now, which of them are in sunlight, and what the
+    terminator is doing underneath them. Fly to any of them and the inversion runs on it.
+  </p>
+
+  <figure class="hero-figure" style="margin:1.6rem 0">
+    <img src="assets/img/bench_poster.jpg" alt="The SPINDEX orbital bench: a real satellite tumbling, the swept spin axis, and the observer's line of sight" loading="lazy" width="1280" height="720">
+    <figcaption>Landsat 7 at a glint, the swept spin axis in orange, and the return leg to the observer in blue.</figcaption>
+  </figure>
+
+  <div class="grid-3">
+    <div class="card">
+      <h4>Real orbits, real clock</h4>
+      <p>Positions come from CelesTrak elements propagated with SGP4 against the wall
+      clock; the sun is on its real vector; eclipse is a geometric test against Earth's
+      shadow. Altitude, ground speed, sub-satellite point and element age are read off
+      that, not typed in.</p>
+    </div>
+    <div class="card">
+      <h4>Phase angle is measured, not set</h4>
+      <p>There is no phase-angle slider any more. It is the angle between the sun and
+      the camera as measured at the target, recomputed every frame — fly somewhere else
+      and the illumination geometry genuinely changes, so the light curve does too.</p>
+    </div>
+    <div class="card">
+      <h4>Facets from the spacecraft itself</h4>
+      <p>Each mesh is reduced to a facet set by binning its triangles on normal
+      direction and material. Landsat 7's 40,439 triangles become 738 facets, so the
+      curve belongs to the object you are looking at.</p>
+    </div>
+  </div>
+
+  <p>
+    All five are real catalogued objects. Four of them are derelict or spent; the fifth is
+    there as the counter-example. <strong>The symmetric SSL-1300 bus was expected to be
+    degenerate at <code>P/2</code> and is not</strong> — its dishes and offset hardware
+    break the 180° symmetry just enough for the fold walk to resolve the full period. Real
+    hardware is never exactly symmetric, which is why the repository keeps an idealised
+    box-wing target that is.
+  </p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Object</th><th class="num">NORAD</th><th>Why it is there</th><th>Mesh</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Landsat 7</strong><br><span class="muted">decommissioned 2024 · 1,973 kg</span></td>
+            <td class="num">25682</td>
+            <td>A real derelict in a crowded sun-synchronous shell; symmetry thoroughly broken, period resolves</td>
+            <td class="ok">the actual spacecraft</td></tr>
+        <tr><td><strong>Envisat</strong><br><span class="muted">failed 2012 · 8,211 kg</span></td>
+            <td class="num">27386</td>
+            <td>The object every debris-removal study is written around; its tumble has been measured from the ground and it changed between campaigns</td>
+            <td class="warn">stand-in</td></tr>
+        <tr><td><strong>Intelsat 901</strong><br><span class="muted">GEO · MEV-1 docked 2020</span></td>
+            <td class="num">26824</td>
+            <td>An SSL-1300 bus — the first satellite ever docked with by a servicer in orbit</td>
+            <td class="ok">the actual bus</td></tr>
+        <tr><td><strong>SL-16 R/B</strong><br><span class="muted">spent Zenit-2 stage · 8,900 kg</span></td>
+            <td class="num">23088</td>
+            <td>No array to glint off, so the lowest modulation depth here and where the false-alarm test earns its place</td>
+            <td class="warn">stand-in</td></tr>
+        <tr><td><strong>Hubble</strong><br><span class="muted">operational · serviced five times</span></td>
+            <td class="num">20580</td>
+            <td>The counter-example: a cooperative target whose attitude is known to arcseconds</td>
+            <td class="warn">stand-in</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="muted" style="font-size:.86rem">
+    Elements are a dated CelesTrak snapshot, embedded so the page works from any static
+    host; SGP4 propagates it to the present and the page reports the element age rather
+    than implying a precision it does not have. A spin state is not published for any of
+    these objects — that is the point — so the page drives each one with a commanded
+    tumble you set, and scores the inversion against it.
+  </p>
+
+  <div class="cta-row" style="margin-top:1.4rem">
+    <a class="cta is-primary" href="#bench">Open the 3D bench →</a>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ======================================================= architecture -->
+<section class="numbered t-blue wrap" id="architecture">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Architecture: nine stages, two paths</h2></div>
+
+  <p>
+    The recorded path establishes correctness against a known truth; the live path is what a
+    servicer would actually consume. They share every stage from photometry onward, which is
+    deliberate — a live feed running different mathematics from the validated one proves
+    nothing.
+  </p>
+
+  <div class="chain" id="pipeline">
+    <div class="chain-block stage"><span class="n">STAGE 1</span><b>Forward model</b><span class="d">Box-wing facets, Lambertian + Blinn-Phong, spin × triangular rock</span><span class="m">forward_model.py</span></div>
+    <div class="chain-block stage"><span class="n">STAGE 1b</span><b>Render</b><span class="d">Light curve → PNG frames with photon noise, gamma, stray light → CFR .mov</span><span class="m">render_frames.py</span></div>
+    <div class="chain-block stage"><span class="n">STAGE 2</span><b>Extraction</b><span class="d"><code>ffmpeg -vsync 0</code> fused with a constant-frame-rate audit</span><span class="m">frames.py</span></div>
+    <div class="chain-block stage"><span class="n">STAGE 3</span><b>Photometry</b><span class="d">Fixed circular aperture, sigma-clipped background annulus</span><span class="m">photometry.py</span></div>
+    <div class="chain-block stage"><span class="n">STAGE 4</span><b>Detrend</b><span class="d">Response linearisation, unit mean, linear drift removal</span><span class="m">run_pipeline.py</span></div>
+    <div class="chain-block stage"><span class="n">STAGE 5</span><b>Period search</b><span class="d">Generalised Lomb-Scargle, with PDM as a shape-free cross-check</span><span class="m">period.py</span></div>
+    <div class="chain-block stage"><span class="n">STAGE 6</span><b>Harmonic</b><span class="d">Sub-harmonic fold walk resolving P against P/2</span><span class="m">period.py</span></div>
+    <div class="chain-block stage"><span class="n">STAGE 7</span><b>Least squares</b><span class="d">Point estimate over six physical parameters</span><span class="m">inversion.py</span></div>
+    <div class="chain-block stage"><span class="n">STAGE 8</span><b>Posteriors</b><span class="d"><code>emcee</code>, medians and 16th/84th percentiles</span><span class="m">inversion.py</span></div>
+    <div class="chain-block stage"><span class="n">STAGE 9</span><b>Scored</b><span class="d">Truth table, residual plot, corner plot, coverage check</span><span class="m">validate.py</span></div>
+  </div>
+
+  <h3>Production topology</h3>
+  <p>
+    Deployed against a real target, the same chain splits across three boundaries. Nothing in
+    the inversion needs to know which side of them it is running on.
+  </p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Tier</th><th>Runs</th><th class="num">Rate</th><th>Why there</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Sensor edge</strong></td>
+          <td>Frame grab, aperture photometry, per-sample timestamping</td>
+          <td class="num">30–60 Hz</td>
+          <td>Reduces a video stream to one float per frame at the source; everything downstream moves kilobytes, not megabytes</td>
+        </tr>
+        <tr>
+          <td><strong>Solver</strong></td>
+          <td>Lomb-Scargle, fold walk, feature extraction, least squares</td>
+          <td class="num">1 Hz</td>
+          <td>A solution per second over the last 60–120 s. Bounded memory and compute, independent of run length</td>
+        </tr>
+        <tr>
+          <td><strong>Gate &amp; archive</strong></td>
+          <td>Anomaly detection, importance scoring, checksummed session export</td>
+          <td class="num">event-driven</td>
+          <td>Decides what reaches a human, and records why for every decision — fired or suppressed</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Bench instrument ↔ orbital case</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>On orbit</th><th>On the bench</th></tr></thead>
+      <tbody>
+        <tr><td>Sunlight</td><td>10 W COB LED, 12 V DC direct-drive, ~5000 K</td></tr>
+        <tr><td>Derelict satellite</td><td>Printed box-wing target, mylar bus, acrylic-faced panels</td></tr>
+        <tr><td>Non-principal-axis tumble</td><td>Axis A spin × Axis B cradle rock, two incommensurate rates</td></tr>
+        <tr><td>Servicer camera</td><td>iPhone or webcam at 60 fps, all automation defeated</td></tr>
+        <tr><td>Solar phase angle</td><td>30° between lamp, target and lens</td></tr>
+        <tr><td>Deep-space background</td><td>Light-sealed enclosure, stray light below 2 % of peak</td></tr>
+        <tr><td><em>Unknown</em> true spin state</td><td><strong>Commanded</strong> step rate + an independent slot-sensor channel</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================= physics -->
+<section class="numbered t-green wrap" id="physics">
+  <div class="sec-head"><span class="sec-num">05</span><h2>The forward model</h2></div>
+
+  <p>
+    The target is <strong>unresolved</strong>: at operational range it is a point source, so
+    only facet normals and areas matter. Facet positions, and therefore self-shadowing, are
+    deliberately not modelled. This is a parameterised box-wing, not a shape solver, and
+    saying which one it is matters — a shape solver would claim far more than the data can
+    support.
+  </p>
+
+  <h3>Kinematics</h3>
+  <pre><code>R(t) = Rx(ε(t)) · M₀ · Rz(φ(t))          M₀ = Rx(−90°)
+
+φ(t) = 2π t / P_A + φ₀                   spin phase
+ε(t) = cone · triangle(t / P_B + ψ₀)     cradle rock, triangular not sinusoidal</code></pre>
+  <p>
+    The rock is a <em>triangle</em> wave because the firmware reverses Axis B on a position
+    limit; the harmonic content of a triangle differs from a sinusoid and it shows up in the
+    periodogram, so modelling it as a sinusoid would be a quiet error.
+  </p>
+
+  <h3>Reflection</h3>
+  <pre><code>μᵢ = n̂ · ŝ      cosine of incidence       (ŝ: target → lamp)
+μₑ = n̂ · ô      cosine of emission        (ô: target → camera)
+ĥ  = (ŝ + ô) / |ŝ + ô|
+
+F(t) = scale · Σ [ (A ρ_d / π) μᵢ μₑ  +  A ρ_s (n̂·ĥ)^k μᵢ ] · [μᵢ > 0 ∧ μₑ > 0]  +  offset</code></pre>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Surface</th><th class="num">ρ<sub>d</sub></th><th class="num">ρ<sub>s</sub></th><th class="num">k</th><th>Physical stand-in</th></tr></thead>
+      <tbody>
+        <tr><td>Bus</td><td class="num">0.35</td><td class="num">0.25</td><td class="num">8</td><td>Deliberately creased aluminised mylar — broad and multi-lobed, like real multilayer insulation rather than one mirror facet</td></tr>
+        <tr><td>Panel front</td><td class="num">0.06</td><td class="num">2.6</td><td class="num">180</td><td>Blue transparent acrylic facing: flat, strongly directional — this is what makes the glints</td></tr>
+        <tr><td>Panel back</td><td class="num">0.22</td><td class="num">0.0</td><td class="num">1</td><td>Bare printed PLA, a near-uniform diffuser</td></tr>
+        <tr><td>Dish (Model B)</td><td class="num">0.30</td><td class="num">0.9</td><td class="num">30</td><td>A broad tilted cap whose normal is related to the panel's by no symmetry of the bus</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout is-warn">
+    <span class="label">Found by building the model</span>
+    <p>
+      <strong>The bus cross-section must not be square.</strong> A square bus is
+      90°-symmetric about the spin axis, which puts dominant periodogram power at
+      <code>4/P_A</code> and turns a two-way harmonic ambiguity into a four-way one — an
+      artefact of the model, not of the physics. The bus is therefore 60 × 85 × 110 mm, with
+      the two cross-sectional dimensions deliberately unequal.
+    </p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- =========================================================== inversion -->
+<section class="numbered t-green wrap" id="inversion">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Inversion &amp; algorithms</h2></div>
+
+  <h3>Why Lomb-Scargle and not an FFT</h3>
+  <p>
+    A locked 60 fps recording is uniform by construction, so frame index is the clock. A
+    webcam is not: it drops frames and USB scheduling jitters arrival times. Every live
+    sample is stamped with <code>time.perf_counter()</code> at grab time and the periodogram
+    is fed real timestamps. An FFT cannot accept them. The implementation is the
+    floating-mean generalised Lomb-Scargle of Zechmeister &amp; Kürster (2009), written
+    directly in NumPy and checkable against <code>astropy</code> with a flag, so the
+    equivalence is demonstrated rather than asserted.
+  </p>
+
+  <h3>The interesting part: P versus P/2</h3>
+  <p>
+    A symmetric satellite glints twice per revolution, so the strongest peak sits at
+    <code>2/P</code>, not <code>1/P</code>. Report that peak and your period is half the
+    truth. The standard fix — fold at <code>P</code> and <code>2P</code>, see which is
+    self-consistent — is not sufficient. Three things had to be added:
+  </p>
+
+  <div class="grid-3">
+    <div class="card">
+      <h4>One test is not enough</h4>
+      <p>With realistic bus proportions the dominant peak lands at <code>4/P</code>, not
+      <code>2/P</code>. The test has to climb repeatedly until doubling stops paying.</p>
+    </div>
+    <div class="card">
+      <h4>The envelope contaminates it</h4>
+      <p>Because the spin axis is also rocking, consecutive rotations differ in
+      <em>height</em>. Compared bin by bin they always look different, so a naive test
+      doubles the period forever. Each round divides out a boxcar one fold-window wide first.</p>
+    </div>
+    <div class="card">
+      <h4>The null must be empirical</h4>
+      <p>Against photon errors alone every pair of half-cycles looks significantly different:
+      samples in one phase bin come from many rotations at many rock angles and scatter for a
+      <em>physical</em> reason. The test uses the empirical standard error, floored at the
+      photon error.</p>
+    </div>
+  </div>
+
+  <p>
+    You can watch the walk run on the <a href="#bench">3D bench</a> — the trail shows each
+    doubling, its reduced χ², and whether the halves agreed.
+  </p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Parameter</th><th>Symbol</th><th>Constrained by</th><th>Recoverable</th></tr></thead>
+      <tbody>
+        <tr><td>Spin period</td><td class="mono">p_spin</td><td>Fine structure of the curve</td><td class="ok">Exactly</td></tr>
+        <tr><td>Precession period</td><td class="mono">p_prec</td><td>Envelope of the glint heights</td><td class="ok">Exactly</td></tr>
+        <tr><td>Cone angle</td><td class="mono">cone_deg</td><td>Depth of the envelope modulation</td><td class="ok">To ~0.04 %</td></tr>
+        <tr><td>Panel : bus area</td><td class="mono">panel_area</td><td>Glint-to-baseline amplitude ratio</td><td class="warn">Systematics-limited</td></tr>
+        <tr><td>Spin phase</td><td class="mono">spin_phase0</td><td>Absolute glint timing</td><td class="ok">Exactly</td></tr>
+        <tr><td>Precession phase</td><td class="mono">prec_phase0</td><td>Envelope timing</td><td class="ok">Exactly</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================= results -->
+<section class="numbered t-green wrap" id="results">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Results &amp; validation</h2></div>
+
+  <p>
+    Commanded: spin period <strong>1.84971 s</strong>, precession <strong>11.40820 s</strong>,
+    cone angle <strong>60°</strong>. 120 s at 60 fps, 160 × 120 px, gamma 2.2, through H.264
+    in a QuickTime container. Every number below was fitted to a light curve that went
+    through rendering, compression, <code>ffmpeg</code> extraction and aperture photometry.
+    <strong>The forward model never saw any of that.</strong>
+  </p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Quantity</th><th>Model A (symmetric)</th><th>Model B (asymmetric)</th></tr></thead>
+      <tbody>
+        <tr><td>Spin period <strong>P<sub>A</sub></strong></td><td class="num">1.84971 ± 0.00000 s <span class="ok">(−0.000 %)</span></td><td class="num">1.84971 ± 0.00000 s <span class="ok">(−0.000 %)</span></td></tr>
+        <tr><td>Precession <strong>P<sub>B</sub></strong></td><td class="num">11.40822 ± 0.00017 s <span class="ok">(+0.000 %)</span></td><td class="num">11.40816 ± 0.00015 s <span class="ok">(−0.000 %)</span></td></tr>
+        <tr><td><strong>Cone angle</strong></td><td class="num">60.019 ± 0.056° <span class="ok">(+0.031 %)</span></td><td class="num">59.976 ± 0.034° <span class="ok">(−0.041 %)</span></td></tr>
+        <tr><td><strong>Panel : bus area ratio</strong></td><td class="num">0.19105 ± 0.00024 <span class="warn">(+0.539 %)</span></td><td class="num">0.09524 ± 0.00010 <span class="warn">(+0.237 %)</span></td></tr>
+        <tr><td>Photometry fidelity (Pearson <em>r</em>)</td><td class="num">0.999559</td><td class="num">0.999702</td></tr>
+        <tr><td>χ²<sub>red</sub> (least squares)</td><td class="num">3.287</td><td class="num">1.547</td></tr>
+        <tr><td>Truth inside 68 % interval</td><td class="num">4 / 6</td><td class="num">4 / 6</td></tr>
+        <tr><td>Harmonic resolved from photometry alone</td><td><span class="warn">No — genuinely degenerate</span></td><td><span class="ok">Yes</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>4 of 6 inside the 68 % interval is the expectation for a well-calibrated posterior: the
+  intervals are neither optimistic nor padded.</p>
+
+  <figure>
+    <img src="assets/img/inversion_residuals.png" alt="Model fit overlaid on the measured light curve, with residuals beneath" loading="lazy" width="1430" height="1300">
+    <figcaption>
+      The fit against the curve measured off rendered video. Orange traces are draws from the
+      posterior. The residual panel is what χ²<sub>red</sub> = 1.55 looks like — structure at
+      that level is model error, not noise.
+    </figcaption>
+  </figure>
+
+  <div class="grid-2">
+    <figure>
+      <img src="assets/img/posteriors.png" alt="Corner plot of the six fitted parameters with commanded truth marked" loading="lazy" width="1529" height="1529">
+      <figcaption>Posteriors for all six parameters, commanded truth in blue.</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/img/period_recovery.png" alt="Light curve, periodogram, envelope periodogram and fold test" loading="lazy" width="1300" height="1690">
+      <figcaption>Light curve, periodogram with harmonics marked, envelope periodogram, and the fold test itself.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Things found by testing that would not have been found by reading</h3>
+  <div class="grid-2">
+    <div class="card">
+      <h4>A wrong photometry gain made χ² meaningless — and the error rescaling hid it</h4>
+      <p>
+        The gain converting intensity to photons was a hardcoded guess, wrong by 113×.
+        Recovered <em>parameters</em> were unaffected, but the error bars were nonsense and
+        χ²<sub>red</sub> came out at 174.9. Because the fitter rescales errors by
+        √χ²<sub>red</sub>, the posteriors still looked plausible and the coverage still looked
+        right. The renderer now writes the true photon scale: χ²<sub>red</sub> 174.9 → 1.55.
+        <strong>Look at the raw χ²<sub>red</sub> before trusting an interval.</strong>
+      </p>
+    </div>
+    <div class="card">
+      <h4>Exposure scaling was silently destroying the photometry</h4>
+      <p>
+        The target initially sat at 0.2 % of full well, so the measurement was mostly 8-bit
+        rounding — 15.7 % residual with no other symptom. The renderer now puts the peak pixel
+        at 88 % of full scale, which is "the longest exposure that does not clip the glint
+        peak" <em>performed</em> rather than trusted. Residual fell to 1.2 %.
+      </p>
+    </div>
+    <div class="card">
+      <h4>Stage 3 is shot-noise limited</h4>
+      <p>Raising peak photons tenfold drops the residual from 1.24 % to 0.44 % — a factor of
+      3.2 against √10 = 3.16. Disabling drift or stray light moves it by under 0.15 points.</p>
+    </div>
+    <div class="card">
+      <h4>The area ratio is systematics-limited, not noise-limited</h4>
+      <p>Its formal interval is ~0.1 % but it sits 0.24–0.54 % high, at 2.2σ and 4.3σ. Quote
+      it with a systematic term, not the formal error bar.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ======================================================== notification -->
+<section class="numbered t-amber wrap" id="notification">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Features &amp; the notification rule</h2></div>
+
+  <p class="lede">
+    Detection is cheap; notification is expensive. An alerting system that cries wolf is
+    worse than no alerting system, because it manufactures false confidence that someone is
+    watching.
+  </p>
+
+  <div class="tiles">
+    <div class="tile green"><div class="v">0</div><div class="k">False alarms on healthy runs</div><div class="s">8 seeds</div></div>
+    <div class="tile green"><div class="v">8/8</div><div class="k">Injected spin-downs detected</div><div class="s">8 seeds</div></div>
+    <div class="tile amber"><div class="v">69 %</div><div class="k">Suppressed on a faulted run</div><div class="s">26 events → 8 notified</div></div>
+    <div class="tile purple"><div class="v">33</div><div class="k">Named features</div><div class="s">periodicity, morphology, photometry, stability</div></div>
+  </div>
+
+  <h3>The rule</h3>
+  <pre><code>importance = severity × confidence × max(novelty, persistence) × kind_weight</code></pre>
+  <p>
+    <strong>Novelty and persistence combine as <code>max</code>, not a product.</strong> An
+    event matters if it is <em>either</em> new <em>or</em> entrenched. Multiplying would
+    suppress both the first occurrence (no streak yet) and the hundredth (no novelty left) —
+    precisely backwards.
+  </p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th class="num">#</th><th>Gate</th><th>Effect</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>Mute</td><td>Kinds never notified on, whatever they score</td></tr>
+        <tr><td class="num">2</td><td>Always-notify severity</td><td>Critical conditions bypass cooldown and quiet hours</td></tr>
+        <tr><td class="num">3</td><td>Severity floor</td><td>Below this severity, never notify regardless of score</td></tr>
+        <tr><td class="num">4</td><td>Importance threshold</td><td>The single most consequential dial</td></tr>
+        <tr><td class="num">5</td><td>Cooldown</td><td>Seconds before the same kind may notify again</td></tr>
+        <tr><td class="num">6</td><td>Quiet hours</td><td>Honoured except at or above an urgency override</td></tr>
+        <tr><td class="num">7</td><td>Rate limit</td><td>Hard ceiling per window, whatever the scores say</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>
+    Session archives carry SHA-256 checksums, schema version, provenance and the policy that
+    produced their decisions. Import verifies all of it and raises events for tampering,
+    truncation, non-monotonic timestamps and schema drift — gated through the <em>same</em>
+    engine as live events. One bar, one audit trail.
+  </p>
+
+  <figure>
+    <img src="assets/img/live_dashboard.png" alt="The nine-panel SPINDEX live monitor" loading="lazy" width="1500" height="900">
+    <figcaption>
+      The live monitor. The readout <strong>greys itself out when the period is not
+      statistically significant</strong> — a guidance feed that cannot say "I don't know yet"
+      is more dangerous than no feed at all.
+    </figcaption>
+  </figure>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================ hardware -->
+<section class="numbered t-blue wrap" id="hardware">
+  <div class="sec-head"><span class="sec-num">09</span><h2>The instrument</h2></div>
+
+  <figure>
+    <img src="assets/img/hw_full_rig.jpg" alt="The assembled two-axis testbed" loading="lazy" width="1500" height="1125">
+    <figcaption>
+      2020 aluminium frame, printed PETG cradle carrying Motor A, target on the hub, and the
+      Axis B shaft running through bearing blocks in both posts.
+    </figcaption>
+  </figure>
+
+  <p>
+    Axis A rotates the target continuously. Axis B rocks the entire cradle through ±60°,
+    sweeping the spin axis through the observer's frame. Two incommensurate frequencies — the
+    signature of genuine <strong>non-principal-axis tumbling</strong>, which is what real
+    derelicts do, rather than a trivial single-axis spin any FFT solves in one line.
+  </p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Quantity</th><th class="num">Value</th><th>Derivation</th></tr></thead>
+      <tbody>
+        <tr><td>Microsteps per motor rev</td><td class="num">3,200</td><td>200 × 16</td></tr>
+        <tr><td>Microsteps per Axis B rev</td><td class="num">9,600</td><td>3,200 × 3 (60 T driven by 20 T)</td></tr>
+        <tr><td>Axis B resolution</td><td class="num">0.0375 °/µstep</td><td>360° ÷ 9,600</td></tr>
+        <tr><td>Axis B sweep, ±60°</td><td class="num">±1,600 µsteps</td><td>120° ÷ 0.0375°, measured from centre</td></tr>
+        <tr><td>Axis A rate for P<sub>A</sub> = 1.85 s</td><td class="num">1,730 µsteps/s</td><td>3,200 ÷ 1.85</td></tr>
+        <tr><td>Axis B rate for P<sub>B</sub> = 11.4 s</td><td class="num">561 µsteps/s</td><td>4 × 1,600 ÷ 11.4</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout is-warn">
+    <span class="label">Two corrections to the published specification, found by building it</span>
+    <p>
+      Appendix A.3 lists "±60° → 3,200 microsteps"; that 3,200 is <em>total peak-to-peak</em>
+      travel, so the amplitude from centre is <strong>1,600</strong>. Taking it as ±3,200
+      rocks the cradle ±120°, double the travel the flexing service loop was sized for. And
+      the same table's "842 steps/s" disagrees with its own stated derivation, which gives
+      <strong>561</strong> — the value the firmware uses.
+    </p>
+  </div>
+
+  <h3>Four design decisions that are measurement decisions</h3>
+  <div class="grid-2">
+    <div class="card">
+      <h4>TMC2209, not A4988</h4>
+      <p>An A4988 at coarse microstepping produces measurable <strong>cogging</strong>: a
+      periodic variation in rotation rate locked to the step frequency. A periodic rate ripple
+      is <em>indistinguishable from a real periodic signal</em> — it appears in the periodogram
+      as a spurious peak and you spend days chasing a frequency generated by your own motor.</p>
+    </div>
+    <div class="card">
+      <h4>A rocking cradle, not a full gimbal</h4>
+      <p>A continuously rotating second axis needs a slip ring, which brings friction, contact
+      noise on the sensor line, and another failure mode. Because Axis B never exceeds ±60°,
+      the cables pass through a service loop that <strong>flexes rather than wraps</strong>.</p>
+    </div>
+    <div class="card">
+      <h4>DC-driven COB, never a mains LED flood</h4>
+      <p>Cheap LED floods modulate at 100 Hz; recording at 60 fps produces a beat that appears
+      as a strong periodic signal which is <em>entirely an artefact of the lighting</em>. It
+      looks exactly like a real detection. A 10 W COB on the regulated DC rail removes it for
+      about ₹250.</p>
+    </div>
+    <div class="card">
+      <h4>30° phase angle, not 0°</h4>
+      <p>Putting the lamp beside the camera maximises returned flux and is wrong twice over:
+      the camera physically shadows the target, and at near-zero phase opposition brightening
+      compresses the specular-to-diffuse contrast being measured.</p>
+    </div>
+  </div>
+
+  <h3>The slot sensor — the ground-truth channel</h3>
+  <p>
+    The cheapest item in the build and one of the most important. A tab on the target hub
+    breaks an IR beam <strong>once per revolution</strong>; the controller polls D9 every loop
+    and prints <code>micros()</code> on each rising edge. It measures the true rotation period
+    through a <em>completely independent physical channel</em> — no camera, no lens, no codec,
+    no photometry. Edge resolution of 20–100 µs against a 1.85 s period is a fractional error
+    below <strong>0.006 %</strong>, so the reference is not the limiting term in the
+    comparison — exactly the property a reference must have.
+  </p>
+
+  <div class="grid-2">
+    <figure><img src="assets/img/hw_target.jpg" alt="The printed box-wing target" loading="lazy" width="1500" height="2000"><figcaption>The Model A target: symmetric box-wing, two opposed panels.</figcaption></figure>
+    <figure><img src="assets/img/hw_cradle.jpg" alt="The cradle carrying Motor A" loading="lazy" width="1280" height="960"><figcaption>Motor A inside the cradle, driving the target through the hub above.</figcaption></figure>
+    <figure><img src="assets/img/hw_electronics.jpg" alt="Arduino Uno, CNC Shield V3 and stepper drivers" loading="lazy" width="1500" height="2000"><figcaption>12 V SMPS, CNC Shield V3, inline fuse and rocker switch on the 12 V rail.</figcaption></figure>
+    <figure><img src="assets/img/hw_optical.jpg" alt="Camera, lamp and target at a 30 degree phase angle" loading="lazy" width="1500" height="1125"><figcaption>The optical geometry. Measurement runs require the light-sealed enclosure.</figcaption></figure>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ========================================================== operations -->
+<section class="numbered t-blue wrap" id="operations">
+  <div class="sec-head"><span class="sec-num">10</span><h2>Running &amp; deploying</h2></div>
+
+  <p>Everything below runs without hardware.</p>
+
+  <pre><code>pip install -r requirements.txt
+
+# full chain: synthetic -> video -> photometry -> period, scored against truth
+python pipeline/run_pipeline.py --model B
+
+# stages 7-9: least squares + MCMC posteriors against the measured curve
+python pipeline/validate.py --model B --from-photometry
+
+# live monitor
+python pipeline/live.py --list-devices
+python pipeline/live.py --source 0 --window 120
+
+# features + anomalies + importance-gated notifications + archive
+python pipeline/analyse.py --csv data/serial/run01.csv --expect 1.8 \
+       --export data/sessions/run01
+
+# tests
+python pipeline/test_notify.py      # 44 checks
+python pipeline/test_recovery.py    # 80-case robustness sweep</code></pre>
+
+  <h3>Deploying this handbook</h3>
+  <p>
+    A static site: HTML, CSS, ES modules, images and four glTF models. No build step, no
+    server-side component.
+  </p>
+  <pre><code># serve locally (a server, not file:// — the page uses ES modules)
+python -m http.server 8000 --directory handbook
+
+# GitHub Pages: Settings -> Pages -> deploy from branch, /(root)
+# Netlify / Vercel / Cloudflare Pages: publish directory `handbook`</code></pre>
+
+  <div class="callout">
+    <span class="label">Operating envelope</span>
+    <p>
+      Minimum recording length <strong>120 s</strong> — 60 s cases fail at 10 % noise. Stray
+      light below <strong>2 %</strong> of target peak. Exposure set so the glint peak lands
+      near <strong>88 %</strong> of full scale: clipping destroys the amplitude information
+      the area ratio depends on, and under-exposure turns the measurement into 8-bit rounding.
+    </p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================== limits -->
+<section class="numbered t-amber wrap" id="limits">
+  <div class="sec-head"><span class="sec-num">11</span><h2>Limits &amp; build status</h2></div>
+
+  <p>An instrument whose limits are declared is more credible than one whose limits are
+  discovered by the examiner.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Subsystem</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Analysis pipeline, stages 1–9</td><td class="ok">Complete and validated against known truth</td></tr>
+        <tr><td>Live monitor and notification subsystem</td><td class="ok">Complete; 44/44 tests pass</td></tr>
+        <tr><td>Frame, cradle, transmission</td><td class="ok">Assembled</td></tr>
+        <tr><td>Motors, drivers, shield, power</td><td class="ok">Wired and running</td></tr>
+        <tr><td>Firmware</td><td class="ok">Written, compiles, flashes, verified over serial</td></tr>
+        <tr><td>Drivers fitted</td><td class="warn">A4988 in place of the specified TMC2209 — expect cogging until swapped</td></tr>
+        <tr><td>Controller</td><td class="bad">Failed during bring-up; replacement on order</td></tr>
+        <tr><td>Slot sensor</td><td class="bad">Not yet fitted</td></tr>
+        <tr><td>Second axis</td><td class="warn">Available but parked — currently single-axis</td></tr>
+        <tr><td>Target surfacing</td><td class="warn">Bare PLA; mylar bus wrap and acrylic facing still to do</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Method limits that no amount of hardware fixes</h3>
+  <ul>
+    <li><strong>A symmetric target is genuinely degenerate.</strong> Photometry alone cannot
+    distinguish <code>P</code> from <code>P/2</code> for a body invariant under 180° about its
+    spin axis. SPINDEX reports the degeneracy rather than guessing.</li>
+    <li><strong>Panel area is only ever relative.</strong> It is degenerate with lamp
+    brightness and distance; only the panel-to-bus ratio is constrained.</li>
+    <li><strong>This is a parameterised box-wing, not a shape solver.</strong> Coarse geometry
+    is recoverable; a mesh is not.</li>
+    <li><strong>A phase angle near 0° degrades the measurement</strong> by compressing the very
+    contrast the method reads.</li>
+  </ul>
+
+  <div class="callout is-good">
+    <span class="label">The part that is not contingent</span>
+    <p>
+      Every result in this handbook is validated against synthetic data and rendered video with
+      known ground truth. That is why the science was finished while the hardware was still in
+      pieces, and why the hardware's current state does not put any reported number in doubt.
+    </p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ========================================================== references -->
+<section class="numbered t-blue wrap" id="references">
+  <div class="sec-head"><span class="sec-num">12</span><h2>References &amp; credits</h2></div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Reference</th><th>Used for</th></tr></thead>
+      <tbody>
+        <tr><td>Zechmeister &amp; Kürster (2009), <em>A&amp;A</em> <strong>496</strong>, 577</td><td>Generalised Lomb-Scargle, floating-mean normalisation</td></tr>
+        <tr><td>Stellingwerf (1978), <em>ApJ</em> <strong>224</strong>, 953</td><td>Phase dispersion minimisation, as a shape-free cross-check</td></tr>
+        <tr><td>Foreman-Mackey et al. (2013), <em>PASP</em> <strong>125</strong>, 306</td><td><code>emcee</code>, stage 8 posteriors</td></tr>
+        <tr><td>Blinn (1977) / Phong (1975)</td><td>Specular lobe in the forward model</td></tr>
+        <tr><td>ESA Space Environment Report</td><td>Debris population statistics</td></tr>
+        <tr><td>Astroscale ADRAS-J (2024)</td><td>Rendezvous with a spent upper stage</td></tr>
+        <tr><td>Northrop Grumman MEV-1 / MEV-2</td><td>Docking with live satellites in GEO</td></tr>
+        <tr><td>NASA 3D Resources</td><td>Spacecraft geometry on the 3D bench — free and without copyright</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>The name</h3>
+  <p>
+    <strong>SPINDEX</strong> — <strong>Spin</strong> <strong>D</strong>etermination by
+    <strong>INDEX</strong> of Reflected Light. The "index" is the light curve itself: a
+    one-dimensional trace of brightness against time that indexes the full three-dimensional
+    attitude history of a body nobody can reach, touch, or ask.
+  </p>
+
+  <div class="page-foot">
+    <p>
+      SPINDEX · SDC-001 Rev B · Team <strong>ZEIT v1.0</strong> · Team ID <strong>S080</strong>
+      · Lead: Sarthak Tyagi<br>
+      Spacecraft geometry from NASA 3D Resources; NASA does not endorse this project.
+      Rendering with three.js r169.<br>
+      <a href="https://github.com/Sarthakk1407/SPINDEX" rel="noopener">github.com/Sarthakk1407/SPINDEX</a>
+    </p>
+  </div>
+</section>
+
+</div>
+
+<div id="view-bench" hidden>
+<main class="bench-main">
+
+  <!-- ============================================================= hero -->
+  <section class="bench-hero">
+    <p class="eyebrow">ORBITAL BENCH · SUSTAIN-A-THON 2.0 2026 · TEAM ZEIT v1.0 · S080</p>
+    <h1>SPINDEX Orbital Bench</h1>
+    <p class="lede">
+      A real derelict spacecraft, tumbling under the commanded kinematics, lit by one
+      source and watched by one camera. The geometry is NASA's. The light curve under it
+      is not an animation of a measurement — it is the measurement, summed over facets
+      taken from <em>this</em> spacecraft's own triangles.
+    </p>
+    <p class="lede">
+      <strong>The whole inversion runs on this page.</strong> Underneath the viewport,
+      the generalised Lomb-Scargle periodogram, the sub-harmonic fold walk, the envelope
+      search, thirty-three features, the anomaly detectors and the seven-gate importance
+      rule all execute in the browser, once a second, on the last sixty seconds of
+      samples. The readout, the strip and the log below are showing that computation.
+    </p>
+
+    <div class="meta-strip">
+      <div><span>Forward model</span><b>pipeline/forward_model.py</b></div>
+      <div><span>Period search</span><b>pipeline/period.py</b></div>
+      <div><span>Geometry</span><b id="meta-geometry">NASA 3D Resources</b></div>
+      <div><span>Facets</span><b id="meta-facets">—</b></div>
+      <div><span>Simulation</span><b>60 Hz · 60 s window · 1 Hz solve</b></div>
+    </div>
+  </section>
+
+  <!-- ====================================================== the console -->
+  <div class="bench-grid">
+
+    <!-- ---------------- control rail ---------------- -->
+    <aside class="rail" id="rail">
+
+      <div class="rail-group">
+        <h3>Catalogue</h3>
+        <div id="target-buttons" class="opt-list"></div>
+        <p class="rail-note" id="target-why">—</p>
+      </div>
+
+      <div class="rail-group">
+        <h3>Commanded motion</h3>
+        <div class="ctrl">
+          <label for="c-pspin">Spin period <code>P_A</code></label><output id="c-pspin-out"></output>
+          <input type="range" id="c-pspin" min="0.9" max="1.95" step="0.0001" value="1.8497">
+        </div>
+        <div class="ctrl">
+          <label for="c-pprec">Precession <code>P_B</code></label><output id="c-pprec-out"></output>
+          <input type="range" id="c-pprec" min="4" max="30" step="0.01" value="11.41">
+        </div>
+        <div class="ctrl">
+          <label for="c-cone">Cone angle</label><output id="c-cone-out"></output>
+          <input type="range" id="c-cone" min="0" max="75" step="1" value="60">
+        </div>
+        <p class="rail-note">
+          The spin slider stops at 1.95 s because the solver splits the spectrum at
+          0.5 Hz — above it spin, below it envelope. The design separates the two bands
+          by about a factor of six, which is what makes the split safe.
+        </p>
+      </div>
+
+      <div class="rail-group">
+        <h3>Observation</h3>
+          <div class="rate-row">
+            <span class="rate-label">Clock</span>
+            <div class="btn-row" id="rate-buttons"></div>
+          </div>
+          <p class="rail-note">
+            Phase angle is no longer a control. It is the angle between the sun and
+            the camera measured at the target, recomputed every frame from the real
+            solar vector — fly somewhere else and the illumination genuinely changes.
+          </p>
+        <div class="ctrl">
+          <label for="c-noise">Photometric noise</label><output id="c-noise-out"></output>
+          <input type="range" id="c-noise" min="0" max="0.12" step="0.005" value="0.02">
+        </div>
+        <div class="ctrl">
+          <label for="c-speed">Time rate</label><output id="c-speed-out"></output>
+          <input type="range" id="c-speed" min="0.2" max="4" step="0.1" value="1">
+        </div>
+      </div>
+
+      <div class="rail-group">
+        <h3>Run</h3>
+        <div class="btn-row">
+          <button class="btn" type="button" id="c-play">Pause</button>
+          <button class="btn" type="button" id="c-reset">Reset session</button>
+        </div>
+      </div>
+
+      <div class="rail-group">
+        <h3>Inject a fault</h3>
+        <div class="opt-list" id="fault-buttons">
+          <button class="opt" type="button" data-fault="spindown">
+            <b>Spin-down</b><span>rate ramps 21 % over 14 s</span></button>
+          <button class="opt" type="button" data-fault="saturate">
+            <b>Detector clipping</b><span>aperture driven into the ceiling</span></button>
+          <button class="opt" type="button" data-fault="dropout">
+            <b>Frame dropouts</b><span>22 % of frames lost</span></button>
+          <button class="opt" type="button" data-fault="occult">
+            <b>Eclipse entry</b><span>flux falls to 4 %</span></button>
+        </div>
+        <p class="rail-note">
+          Each fault changes the simulated physics, not the display. The feature
+          extractor sees it, the detectors raise events, and the gate decides
+          independently whether an operator is told. Click again to clear.
+        </p>
+      </div>
+
+      <div class="rail-group">
+        <h3>Where to fly</h3>
+        <div class="opt-list" id="view-buttons"></div>
+      </div>
+
+      <div class="rail-group">
+        <h3>Display</h3>
+        <div class="btn-row">
+          <button class="btn is-on" type="button" id="c-labels">Labels</button>
+          
+          <button class="btn is-on" type="button" id="c-fan">Orbit tracks</button>
+          <button class="btn" type="button" id="c-orbit">Slow orbit</button>
+        </div>
+        <div class="ctrl" style="margin-top:.7rem">
+          <label for="c-explode">Exploded view</label><output id="c-explode-out"></output>
+          <input type="range" id="c-explode" min="0" max="1" step="0.01" value="0">
+        </div>
+      </div>
+    </aside>
+
+    <!-- ---------------- viewport ---------------- -->
+    <div class="stage-wrap">
+      <div id="scene-stage">
+        <canvas id="scene-canvas"></canvas>
+
+        <div class="stage-chip" id="stage-chip"><span class="dot"></span><b id="chip-target">LOADING</b></div>
+        <div class="phase-chip" id="phase-chip">ACQUIRE</div>
+
+        <div class="hud" id="hud-readout">
+          <div class="hud-title">SPIN SOLUTION</div>
+          <div class="hud-row"><span class="hud-key">UTC</span><span class="hud-value" id="hud-clock">—</span></div>
+          <div class="hud-sep"></div>
+          <div class="hud-row"><span class="hud-key">commanded P<sub>A</sub></span><span class="hud-value" id="hud-commanded">—</span></div>
+          <div class="hud-row"><span class="hud-key">recovered P<sub>A</sub></span><span class="hud-value" id="hud-recovered">—</span></div>
+          <div class="hud-row"><span class="hud-key">error</span><span class="hud-value" id="hud-error">—</span></div>
+          <div class="hud-sep"></div>
+          <div class="hud-row"><span class="hud-key">phase angle</span><span class="hud-value" id="hud-phase">—</span></div>
+          <div class="hud-row"><span class="hud-key">illumination</span><span class="hud-value" id="hud-ecl">—</span></div>
+          <div class="hud-sep"></div>
+          <div class="hud-row"><span class="hud-key">LS peak</span><span class="hud-value" id="hud-peak">—</span></div>
+          <div class="hud-row"><span class="hud-key">harmonic</span><span class="hud-value" id="hud-harmonic">—</span></div>
+          <div class="hud-row"><span class="hud-key">FAP</span><span class="hud-value" id="hud-fap">—</span></div>
+        </div>
+
+        <div class="loading" id="loading"><span></span>loading spacecraft geometry…</div>
+        <span class="scene-hint">drag to orbit · scroll to zoom · click a satellite to fly to it</span>
+      </div>
+
+      <!-- ---------------- signal monitor ---------------- -->
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Signal monitor — the last 30 s</h2>
+          <span class="panel-note" id="monitor-note">—</span>
+        </div>
+        <canvas id="plot-curve" class="tall"></canvas>
+        <div class="legend">
+          <span class="lg lg-blue">measured flux — what the camera returns</span>
+          <span class="lg lg-grey">noise-free flux — the forward model</span>
+          <span class="lg lg-amber">adopted period — one mark per rotation</span>
+        </div>
+      </section>
+
+      <div class="panel-row">
+        <section class="panel">
+          <div class="panel-head"><h2>Lomb-Scargle periodogram</h2>
+            <span class="panel-note">spin band above 0.5 Hz</span></div>
+          <canvas id="plot-periodogram"></canvas>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><h2>Phase fold, two halves</h2>
+            <span class="panel-note">overlaid ⇒ doubling buys nothing</span></div>
+          <canvas id="plot-fold"></canvas>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><h2>Recovered period vs time</h2>
+            <span class="panel-note">grey = rejected by the FAP test</span></div>
+          <canvas id="plot-history"></canvas>
+        </section>
+      </div>
+
+      <!-- ---------------- pipeline strip ---------------- -->
+      <section class="panel">
+        <div class="panel-head">
+          <h2>The chain, executing</h2>
+          <span class="panel-note">lit blocks are the ones that ran on the last solve</span>
+        </div>
+        <div class="chain" id="chain"></div>
+      </section>
+
+      <!-- ---------------- readout ---------------- -->
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Measured in this simulation</h2>
+          <span class="panel-note">computed on this page, frame by frame</span>
+        </div>
+        <div class="readout" id="readout"></div>
+        <p class="panel-foot">
+          Every figure above is computed from the samples drawn in the monitor. The
+          false-alarm probability governs whether the solution is claimed at all:
+          when it fails, the readout greys itself out rather than reporting a
+          confident wrong number.
+        </p>
+      </section>
+
+      <div class="panel-row two">
+        <section class="panel">
+          <div class="panel-head"><h2>Sub-harmonic fold walk</h2>
+            <span class="panel-note">χ²<sub>red</sub> ≥ 2 ⇒ halves differ ⇒ double</span></div>
+          <ul id="walk-trail" class="walk"></ul>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><h2>Importance gate</h2>
+            <span class="panel-note" id="gate-stats">0 submitted · 0 notified</span></div>
+          <ul id="notify-feed" class="feed"></ul>
+        </section>
+      </div>
+
+      <div class="panel-row two">
+        <section class="panel">
+          <div class="panel-head"><h2>Selected part</h2>
+            <span class="panel-note">click in the viewport or on a label</span></div>
+          <div id="selected" class="selected">
+            <p class="muted">Nothing selected. Click a labelled part on the spacecraft,
+            or click the mesh itself to see which material the glint came off.</p>
+          </div>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><h2>Event log</h2>
+            <span class="panel-note">every decision, fired or suppressed</span></div>
+          <ul id="event-log" class="log"></ul>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ prose -->
+  <section class="prose">
+    <h2>What this page is</h2>
+    <p>
+      A working model of the SPINDEX measurement against a real object. Three real
+      spacecraft are available, each a case the method has to handle and a real object
+      somebody has had to think about, plus the repository's own idealised box-wing. The
+      NASA geometry is unmodified apart from centring, scale and body-axis orientation.
+    </p>
+    <p>
+      Nothing here is a video of a system. The orientation being rendered is the
+      orientation being measured, the flux is summed over facets extracted from the
+      spacecraft you can see, and the period in the readout is recovered by the same
+      periodogram and the same fold walk the Python pipeline runs.
+    </p>
+
+    <h2>How a real mesh becomes a facet set</h2>
+    <p>
+      The forward model sums over facets because the target is <strong>unresolved</strong>:
+      at operational range it is a point source, and only normals, areas and reflectances
+      matter. A NASA model is the same thing at higher resolution — tens of thousands of
+      triangles, each with a normal, an area and a material. Summing all of them every
+      frame would be wasteful, since thousands of triangles share a normal to within a
+      degree.
+    </p>
+    <p>
+      <strong>All three real spacecraft resolve their full period.</strong> That is itself a
+      result. The SSL-1300, two opposed arrays over a box bus, is the configuration that
+      <em>should</em> be degenerate at <code>P/2</code> — and it is not, because its dishes
+      and offset antenna hardware break the 180° symmetry just enough for the fold walk to
+      climb. The degeneracy needs a target built to be exactly symmetric, which is what the
+      Model A box-wing is for: select it and the readout says <code>P/2 · degenerate</code>,
+      the same answer the Python pipeline gives for the same target.
+    </p>
+    <p>
+      So the mesh is reduced the way the physics already implies. Triangles are binned by
+      the direction they face — 32 bins in azimuth by 16 in elevation — and by what they
+      are made of; the area in each bin is added up and the area-weighted mean normal
+      kept. A 40,000-triangle Landsat collapses to a few hundred facets that reproduce
+      its directional scattering, and the reduction happens once, when you select the
+      target.
+    </p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Material class</th><th class="num">ρ<sub>d</sub></th><th class="num">ρ<sub>s</sub></th><th class="num">shininess</th><th>Identified by</th></tr></thead>
+        <tbody>
+          <tr><td>Solar array</td><td class="num">0.06</td><td class="num">2.6</td><td class="num">180</td><td>Material name, or a dark strongly blue base colour</td></tr>
+          <tr><td>MLI / foil</td><td class="num">0.35</td><td class="num">0.25</td><td class="num">8</td><td>Material name, or a bright warm saturated colour</td></tr>
+          <tr><td>Bare metal</td><td class="num">0.22</td><td class="num">0.9</td><td class="num">40</td><td>Material name, or metalness above 0.6</td></tr>
+          <tr><td>Structure</td><td class="num">0.30</td><td class="num">0.20</td><td class="num">12</td><td>Everything else</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      <strong>The Model A box-wing is the exception:</strong> its facets come straight from
+      <code>forward_model.py</code> rather than from its mesh, because it exists precisely
+      to be exactly symmetric and a mesh reduction would introduce the tiny asymmetries that
+      destroy the degeneracy it is there to demonstrate.
+    </p>
+    <p class="caveat">
+      <strong>Said plainly:</strong> the reflectance values are the repository's own,
+      measured for its bench target, and the assignment of a NASA material to one of
+      these four classes is a heuristic over the material's name and colour. The
+      <em>kinematics</em>, the periodogram and the fold walk are exact; the absolute
+      photometry of a specific real spacecraft is not claimed, and the validated numbers
+      in the handbook come from the box-wing targets, not from these models.
+    </p>
+
+    <h2>Reading the scene</h2>
+    <ul>
+      <li><strong>The orange dashed line</strong> is the spin axis, body <code>+z</code>.
+      The two orange arcs are the limits it rocks between — a planar fan, not a cone,
+      because the cradle rocks about a single axis.</li>
+      <li><strong>The pale beam</strong> is sunlight arriving; <strong>the blue beam</strong>
+      is the return leg to the observer, and its brightness tracks the measured flux.
+      That return is the entire signal: one number per frame.</li>
+      <li><strong>The flare</strong> on the array is driven by the specular fraction of the
+      computed flux, so the flash on screen and the spike in the curve are the same event,
+      not two effects timed to match.</li>
+      <li><strong>The servicer</strong> closes only once the solution has been stable long
+      enough to reach LOCK, and backs off the moment a period change clears the
+      importance bar. That sequence is the reason the feed exists.</li>
+    </ul>
+
+    <h2>The three targets</h2>
+    <div class="table-wrap">
+      <table id="target-table">
+        <thead><tr><th>Target</th><th>Why it is here</th><th>Harmonic</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <h2>What the simulation actually computes</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Block</th><th>What runs</th></tr></thead>
+        <tbody>
+          <tr><td>Kinematics</td><td><code>R(t) = Rx(ε(t)) · M₀ · Rz(φ(t))</code> with a triangular rock, matching the firmware's position-limit reversal</td></tr>
+          <tr><td>Reflection</td><td>Lambertian term plus a Blinn-Phong lobe per facet, gated on the facet being simultaneously lit and visible</td></tr>
+          <tr><td>Sampling</td><td>60 Hz with Gaussian timing jitter and optional dropouts; every sample carries its own timestamp</td></tr>
+          <tr><td>Noise</td><td>Gaussian, as a fraction of the mean flux, plus optional clipping at the detector ceiling</td></tr>
+          <tr><td>Period search</td><td>Floating-mean generalised Lomb-Scargle on a 60 s window, time-sliced across frames so a solve never blocks the render</td></tr>
+          <tr><td>Harmonic</td><td>Sub-harmonic fold walk, each round on a curve flattened over its own fold window</td></tr>
+          <tr><td>Envelope</td><td>Boxcar over one spin period, then a narrow-band periodogram below 0.5 Hz, with its own walk and a baseline guard</td></tr>
+          <tr><td>Gate</td><td>severity × confidence × max(novelty, persistence) × kind weight, through seven ordered gates</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Credits</h2>
+    <p>
+      Spacecraft geometry from the <strong>NASA 3D Resources</strong> collection, which
+      NASA publishes free and without copyright. Landsat 7, the Space Systems Loral
+      SSL-1300 bus, the Agena target vehicle and the Shuttle Remote Manipulator System
+      are used unmodified apart from centring, scaling and re-orientation. NASA does not
+      endorse this project. Rendering with three.js r169.
+    </p>
+  </section>
+</main>
+</div>
+</main>
+
+<script type="module" src="assets/js/app.js"></script>
+</body>
+</html>

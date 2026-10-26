@@ -1,0 +1,14 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "handbook",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        ".claude/serve_handbook.py",
+        "8778"
+      ],
+      "port": 8778
+    }
+  ]
+}

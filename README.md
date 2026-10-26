@@ -572,6 +572,37 @@ is why the science was finished while the hardware was still in pieces.
 
 ---
 
+## The handbook and the 3D bench
+
+Everything in this README, plus the architecture, the full physics, the
+algorithms and a **live 3D bench**, is published as a deployable handbook in
+[`handbook/`](handbook/).
+
+The bench is its own page. Three real spacecraft from NASA's 3D Resources
+collection — Landsat 7, the SSL-1300 bus MEV-1 docked with, and an Agena upper
+stage — tumble under the commanded kinematics, and the light curve is summed
+over facets extracted from the spacecraft's **own triangles**: 40,439 Landsat
+triangles reduce to 738 facets by binning them on normal direction and material.
+Swap the target and the curve changes shape, because the reflecting geometry
+did.
+
+The whole inversion runs in the browser — generalised Lomb-Scargle, the
+sub-harmonic fold walk, the envelope search, 33 features, the anomaly detectors
+and the seven-gate importance rule, once a second on the last sixty seconds of
+samples. Each target is a different answer: the asymmetric one resolves its
+period to about 0.01 %, the symmetric box-wing correctly reports that it can
+only constrain `P/2`, and the spent stage has too little modulation to claim
+one at all.
+
+```bash
+python -m http.server 8000 --directory handbook   # then open localhost:8000
+```
+
+No build step. Deploys to GitHub Pages or any static host as-is — see
+[`handbook/README.md`](handbook/README.md).
+
+---
+
 ## Quick start
 
 ```bash
@@ -608,6 +639,7 @@ No hardware needed for any of the above.
 | `firmware/` | Arduino sketches (Uno + CNC Shield V3, TMC2209/A4988) |
 | `docs/` | Build specification, OBS setup guide, notification design note |
 | `results/` | Reports and scored comparisons from actual runs |
+| `handbook/` | Deployable engineering handbook with the live 3D working model |
 | `data/` | Generated frames, videos, archives (git-ignored — rebuildable) |
 
 **Key modules:** `forward_model.py` (box-wing reflection), `photometry.py`

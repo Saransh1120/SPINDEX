@@ -71,3 +71,10 @@ docs/revb.txt
 
 # Images used in the README are tracked; the generated plot directory is not.
 !docs/images/
+
+# ------------------------------------------------------- handbook dev scratch
+# Frame captures written by .claude/serve_handbook.py during development.
+.claude/capture.jpg
+
+# base64 sidecars are a build artefact of handbook/build_artifact.py
+handbook/assets/models/*.glb.txt
